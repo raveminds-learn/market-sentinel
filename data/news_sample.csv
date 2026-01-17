@@ -1,0 +1,4 @@
+date,title,content,source,sentiment_score,impact_score
+2024-01-15,Federal Reserve Announces Interest Rate Decision,Federal Reserve maintains current interest rates amid economic uncertainty.,Reuters,0.2,0.8
+2024-01-16,Tech Stocks Rally on Positive Earnings,Technology sector shows strong performance with major companies reporting better than expected quarterly results.,Bloomberg,0.8,0.6
+2024-01-17,Oil Prices Surge Amid Supply Concerns,Crude oil prices jump 5% following reports of production cuts in major oil-producing regions.,AP News,-0.6,0.9
