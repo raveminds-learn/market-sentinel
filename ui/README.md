@@ -27,6 +27,13 @@ python -m streamlit run ui/dashboard.py
 
 The dashboard will open in your default web browser at `http://localhost:8501`
 
+## Output Examples
+
+See the `outputs/` folder for interface screenshots:
+- `starting-the-app.png` - Application startup screen
+- `ui-landing-page.png` - Main dashboard interface
+- `ui-results-page.png` - Risk analysis results view
+
 ## Usage
 
 1. **Enter Event Details**:
