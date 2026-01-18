@@ -7,11 +7,11 @@ from typing import List, Dict, Any
 def build_event_index(csv_file_path: str = "data/news_sample.csv", collection_name: str = "market_events") -> Dict[str, Any]:
     """
     Loads a CSV file of past events, generates embeddings using sentence-transformers,
-    and stores them in a ChromaDB collection.
+    and stores them in a LanceDB table.
 
     Args:
         csv_file_path (str): Path to the CSV file containing past events
-        collection_name (str): Name for the ChromaDB collection
+        collection_name (str): Name for the LanceDB table
 
     Returns:
         dict: Dictionary containing collection info and status
@@ -159,7 +159,7 @@ def retrieve_relevant_context(query: str, collection_name: str = "market_events"
         # Query the table
         results = table.search(query_embedding, vector_column_name="vector").limit(n_results).to_pandas()
 
-        # Format results similar to ChromaDB format
+        # Format results similar to LanceDB format
         documents = []
         metadatas = []
         distances = []
@@ -192,11 +192,11 @@ def retrieve_relevant_context(query: str, collection_name: str = "market_events"
 
 def retrieve_similar_events(headline: str, collection_name: str = "market_events", top_k: int = 3) -> Dict[str, Any]:
     """
-    Takes a headline string, embeds it, and returns the top similar events from ChromaDB.
+    Takes a headline string, embeds it, and returns the top similar events from LanceDB.
 
     Args:
         headline (str): The headline to find similar events for
-        collection_name (str): Name of the ChromaDB collection
+        collection_name (str): Name of the LanceDB table
         top_k (int): Number of similar events to retrieve
 
     Returns:
