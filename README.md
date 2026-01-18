@@ -49,6 +49,15 @@ docker-compose up
 ```
 Navigate to `http://localhost:8501`
 
+#### 🚀 Single-Command Launchers
+```bash
+# Using batch script (Windows)
+run_market_sentinel.bat
+
+# Using PowerShell script (Windows)
+.\run_market_sentinel.ps1
+```
+
 ### 🐍 Manual Installation
 
 **Prerequisites:** Python 3.8+, Ollama, Git
