@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from rag.context_retrieval import retrieve_similar_events
 from analytics.historical_analytics import load_price_data, compute_event_reaction
+from understanding.event_understanding import analyze_event
 
 def score_event_risk(event: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -37,6 +38,24 @@ def score_event_risk(event: Dict[str, Any]) -> Dict[str, Any]:
             'market_reaction': {},
             'recommendations': []
         }
+
+        # Step 0: Analyze event with Mistral AI
+        ai_analysis = {'status': 'error', 'analysis': {}}
+        if 'title' in event and event['title']:
+            print(f"Analyzing event with Mistral AI: {event['title']}")
+            try:
+                ai_analysis = {
+                    'status': 'success',
+                    'analysis': analyze_event(event['title'])
+                }
+                print(f"Mistral analysis complete: {ai_analysis['analysis'].get('sentiment', 'Unknown')}")
+            except Exception as e:
+                ai_analysis = {
+                    'status': 'error',
+                    'error': str(e),
+                    'analysis': {}
+                }
+                print(f"Warning: Mistral analysis failed: {e}")
 
         # Step 1: Retrieve similar events using RAG
         if 'title' in event and event['title']:
@@ -142,6 +161,30 @@ def score_event_risk(event: Dict[str, Any]) -> Dict[str, Any]:
         else:
             risk_assessment['risk_factors'].append("Missing ticker or date for market reaction analysis")
 
+        # Step 2.5: Integrate Mistral AI analysis into risk assessment
+        if ai_analysis.get('status') == 'success' and ai_analysis.get('analysis'):
+            mistral_data = ai_analysis['analysis']
+            mistral_sentiment = mistral_data.get('sentiment', '').lower()
+
+            # Enhance risk scoring with AI insights
+            if mistral_sentiment == 'negative':
+                risk_assessment['risk_score'] += 0.2
+                risk_assessment['risk_factors'].append("AI-detected negative sentiment")
+            elif mistral_sentiment == 'positive':
+                risk_assessment['risk_score'] -= 0.1  # Reduce risk for positive sentiment
+                risk_assessment['risk_factors'].append("AI-detected positive sentiment")
+
+            # Extract ticker from AI analysis if not provided by user
+            if not risk_assessment.get('event_ticker') and mistral_data.get('ticker'):
+                risk_assessment['event_ticker'] = mistral_data['ticker']
+
+            # Add AI insights to recommendations
+            if 'recommendations' not in risk_assessment:
+                risk_assessment['recommendations'] = []
+
+            if mistral_data.get('summary'):
+                risk_assessment['recommendations'].append(f"AI Analysis: {mistral_data['summary']}")
+
         # Step 3: Generate comprehensive risk score (0-100) and level
         final_risk_score, risk_level, reasoning = compute_comprehensive_risk_score(
             event, risk_assessment, similar_result, reaction_result
@@ -162,6 +205,7 @@ def score_event_risk(event: Dict[str, Any]) -> Dict[str, Any]:
                 'similar_events_count': len(risk_assessment.get('similar_events', [])),
                 'market_reaction': risk_assessment.get('market_reaction', {}),
                 'sentiment_impact_analysis': extract_sentiment_impact_analysis(event, similar_result),
+                'ai_event_analysis': ai_analysis.get('analysis', {}),
                 'price_reaction_metrics': extract_price_reaction_metrics(reaction_result)
             },
             'recommendations': recommendations,

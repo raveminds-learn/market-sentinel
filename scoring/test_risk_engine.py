@@ -64,6 +64,14 @@ def test_score_event_risk():
                 if keywords:
                     print(f"  Sentiment Keywords: {', '.join(keywords[:3])}")  # Show first 3
 
+                # Check for AI analysis
+                ai_analysis = raw_metrics.get('ai_event_analysis', {})
+                if ai_analysis:
+                    print(f"  AI Event Analysis: {ai_analysis.get('sentiment', 'No sentiment')} sentiment")
+                    print(f"  AI Summary: {ai_analysis.get('summary', 'No summary')[:100]}...")
+                else:
+                    print("  AI Event Analysis: Not available (Ollama not running)")
+
             print("\nSUCCESS: Risk scoring completed successfully!")
             return True
 

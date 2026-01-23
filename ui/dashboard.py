@@ -208,6 +208,38 @@ def main():
                 # Risk Score Display
                 st.header("🎯 Risk Assessment Results")
 
+                # AI Event Analysis Section
+                if 'ai_event_analysis' in result.get('raw_metrics', {}) and result['raw_metrics']['ai_event_analysis']:
+                    st.subheader("🤖 AI Event Analysis (Mistral)")
+
+                    ai_data = result['raw_metrics']['ai_event_analysis']
+
+                    # AI Analysis Cards
+                    col1, col2, col3, col4 = st.columns(4)
+
+                    with col1:
+                        event_type = ai_data.get('event_type', 'Unknown')
+                        st.metric("Event Type", event_type if event_type else "Unknown")
+
+                    with col2:
+                        sentiment = ai_data.get('sentiment', 'Neutral')
+                        sentiment_icon = "🔴" if sentiment.lower() == 'negative' else "🟢" if sentiment.lower() == 'positive' else "🟡"
+                        st.metric("Sentiment", f"{sentiment_icon} {sentiment}")
+
+                    with col3:
+                        ticker = ai_data.get('ticker', 'None')
+                        st.metric("Detected Ticker", ticker if ticker else "None")
+
+                    with col4:
+                        sector = ai_data.get('sector', 'Unknown')
+                        st.metric("Sector", sector if sector else "Unknown")
+
+                    # AI Summary
+                    if ai_data.get('summary'):
+                        st.info(f"📝 **AI Summary:** {ai_data['summary']}")
+
+                    st.markdown("---")
+
                 col1, col2, col3 = st.columns([2, 1, 1])
 
                 with col1:
@@ -329,7 +361,7 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown("*Market Sentinel - AI-Powered Market Risk Assessment*")
-    st.markdown("*Built with Streamlit, Sentence Transformers, LanceDB, and DuckDB*")
+    st.markdown("*Built with Streamlit, Mistral LLM, Sentence Transformers, LanceDB, and DuckDB*")
 
 if __name__ == "__main__":
     main()

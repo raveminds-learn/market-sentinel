@@ -27,6 +27,7 @@ def main():
         print(f"❌ Error starting dashboard: {e}")
         print("\n💡 Make sure you have installed all requirements:")
         print("   pip install streamlit plotly matplotlib sentence-transformers lancedb pandas duckdb")
+        print("   # Also requires Ollama with Mistral model: ollama pull mistral")
 
 if __name__ == "__main__":
     main()
